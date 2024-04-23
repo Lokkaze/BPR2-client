@@ -1,7 +1,7 @@
 <template>
-  <div class="main-container">
-    <div class="main-text">name: {{ name }}</div>
-    <div class="main-text">isTeacher: {{ isTeacherMethod() }}</div>
+  <div class="home-container">
+    <div class="home-text">name: {{ name }}</div>
+    <div class="home-text">isTeacher: {{ isTeacherMethod() }}</div>
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Main',
+  name: 'Home',
   computed: {
     ...mapGetters([
       'name',
@@ -28,7 +28,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.main {
+.home {
   &-container {
     margin: 30px;
   }

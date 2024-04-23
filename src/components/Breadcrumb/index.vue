@@ -32,13 +32,13 @@ export default {
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title)
       const first = matched[0]
 
-      if (!this.isMain(first)) {
-        matched = [{ path: '/main', meta: { title: 'BPR2' }}].concat(matched)
+      if (!this.isHome(first)) {
+        matched = [{ path: '/home', meta: { title: 'BPR2' }}].concat(matched)
       }
 
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
     },
-    isMain(route) {
+    isHome(route) {
       const name = route && route.name
       if (!name) {
         return false
