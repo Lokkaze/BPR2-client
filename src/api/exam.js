@@ -8,11 +8,11 @@ export function fetchExam(query){
     })
 }
 
-export function fetchExamDetail(id){
+export function fetchExamDetail(examId){
     return request({
         url: '/exam/detail',
         method: 'get',
-        params: {id}
+        params: {examId}
     })
 }
 
@@ -32,10 +32,10 @@ export function UpdateExam(data){
     })
 }
 
-export function DeleteExam(id){
+export function DeleteExam(examId){
     return request({
         url: '/exam/delete',
         method: 'delete',
-        params: {id}
+        params: {examId}
     })
 }
