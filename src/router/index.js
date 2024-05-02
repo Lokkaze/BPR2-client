@@ -64,7 +64,15 @@ export const constantRoutes = [
       name: 'exam',
       component: () => import('@/views/exam/index'),
       meta: { title: 'exam', icon: 'exam' }
-    }]
+      },
+      {
+        path: 'examInfo/:id(\\d+)',
+        component: () => import('@/views/examInfo/index'),
+        name: 'ExamInfo',
+        meta: { title: 'Exam details', noCache: true, activeMenu: '/exam/exam' },
+        hidden: true
+      }
+    ]
   },
 
   // 404 page must be placed at the end !!!

@@ -56,9 +56,12 @@
       <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <!-- 切换至详情页 -->
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Details
-          </el-button>
+          <router-link :to="'/exam/examInfo/' + row.examId">
+            <el-button type="primary" size="mini">
+              Details
+            </el-button>
+          </router-link>
+          
           <!-- 加提醒 -->
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row.examId)">
             Delete
