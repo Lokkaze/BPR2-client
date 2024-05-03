@@ -133,8 +133,8 @@ export default{
         username: undefined,
         page: 1,
         limit: 10,
-        title: undefined,
-        status: undefined
+        title: '',
+        status: ''
       },
       statusOptions: ['Pending', 'Opening', 'Completed'],
       temp: {

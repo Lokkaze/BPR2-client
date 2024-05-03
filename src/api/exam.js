@@ -8,14 +8,6 @@ export function fetchExam(query){
     })
 }
 
-export function fetchExamDetail(examId){
-    return request({
-        url: '/exam/detail',
-        method: 'get',
-        params: {examId}
-    })
-}
-
 export function CreateExam(data){
     return request({
         url: '/exam/create',
@@ -37,5 +29,29 @@ export function DeleteExam(examId){
         url: '/exam/delete',
         method: 'delete',
         params: {examId}
+    })
+}
+
+export function fetchExamDetail(examId){
+    return request({
+        url: '/exam/detail',
+        method: 'get',
+        params: {examId}
+    })
+}
+
+export function updateExamDetail(data){
+    return request({
+        url: '/exam/detail/edit',
+        method: 'post',
+        data
+    })
+}
+
+export function fetchStudentList(query){
+    return request({
+        url: '/exam/detail/studentList',
+        method: 'get',
+        params: query
     })
 }

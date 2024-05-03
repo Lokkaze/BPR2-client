@@ -1,6 +1,6 @@
 <template>
     <div v-loading="loading">
-        <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px">
+        <el-form ref="dataForm" :model="temp" label-position="left" label-width="70px">
             <el-row style="margin-bottom:50px;margin-top:10px;">
                 <el-col :span="8" class="text-center">
                     <el-card class="box-card">
@@ -57,21 +57,54 @@
                 <el-card class="box-card">
                     <div slot="header" class="clearfix">
                         <span>Student list:</span>
-                        <el-button v-if="edit">
+                        <el-button v-if="edit" @click="startAddingStudent()">
                             Add
                         </el-button>
                     </div>
                     <div>
-                        <el-button type="primary" v-for="item in info.users" :key="item.userId">
-                            <div>
-                                {{ item.username }}
-                            </div>
-                            <div v-if="edit" style="position:absolute;right:0px;">
-                                <span style="float: right ;margin-top: -20px;margin-right:5px;" @click="deleteEle(element)">
+                        <el-table
+                        v-if="edit"
+                        :data="temp.users"
+                        border
+                        fit
+                        highlight-current-row
+                        >
+                        <el-table-column label="StudentId" align="center" width="100">
+                            <template slot-scope="{row}">
+                                <span>{{ row.userId }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="StudentName" align="center" width="200">
+                            <template slot-scope="{row}">
+                                <span>{{ row.username }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="Delete" align="center" width="230" class-name="small-padding fixed-width">
+                            <template slot-scope="{row}">
+                                <el-button @click="deleteStudent(row.userId)">
                                     <i style="color:#ff4949" class="el-icon-delete" />
-                                </span>
-                            </div>
-                        </el-button>
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                        </el-table>
+                        <el-table
+                        v-else
+                        :data="info.users"
+                        border
+                        fit
+                        highlight-current-row
+                        >
+                        <el-table-column label="StudentId" align="center" width="100">
+                            <template slot-scope="{row}">
+                                <span>{{ row.userId }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="StudentName" align="center" width="200">
+                            <template slot-scope="{row}">
+                                <span>{{ row.username }}</span>
+                            </template>
+                        </el-table-column>
+                        </el-table>
                     </div>
                 </el-card>
             </el-row>
@@ -95,11 +128,44 @@
                 
             </el-row>
         </el-form>
+
+        <el-dialog title="Student List" :visible.sync="dialogStudentListVisible">
+            <el-input v-model="studentListQuery.username" placeholder="Name" style="width: 200px;" class="filter-item" />
+            <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleStudentFilter">
+                Search
+            </el-button>
+            <el-table
+            v-loading="loading"
+            :data="studentList"
+            border
+            fit
+            highlight-current-row
+            >
+                <el-table-column label="StudentId" align="center" width="100">
+                    <template slot-scope="{row}">
+                        <span>{{ row.userId }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="StudentName" align="center" width="200">
+                    <template slot-scope="{row}">
+                        <span>{{ row.username }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="Add" align="center" width="230" class-name="small-padding fixed-width">
+                    <template slot-scope="{row}">
+                        <el-button @click="addStudent(row)">
+                            <i style="color:#000000" class="el-icon-plus" />
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-dialog>
         
     </div>
 </template>
 <script>
-import { fetchExamDetail } from '@/api/exam';
+import { fetchExamDetail, fetchStudentList, updateExamDetail } from '@/api/exam';
+import { valid } from 'mockjs';
 
 const defaultFoam = {
     examId: 0,
@@ -117,9 +183,10 @@ const defaultFoam = {
 export default {
     data(){
         return{
+            examId: 0,
             loading: true,
             info: Object.assign({}, defaultFoam),
-            temp: Object.assign({}, defaultFoam),
+            temp: null,
             edit: false,
             statusOptions: ['Pending', 'Opening', 'Completed'],
             rules: {
@@ -127,7 +194,15 @@ export default {
                 startTimestamp: [{ type: 'date', required: true, message: 'startTimestamp is required', trigger: 'change' }],
                 endTimestamp: [{ type: 'date', required: true, message: 'endTimestamp is required', trigger: 'change' }],
                 title: [{ required: true, message: 'title is required', trigger: 'blur' }]
-            }
+            },
+            dialogStudentListVisible: false,
+            studentListQuery: {
+                username: '',
+                page: 1,
+                limit: 10
+            },
+            studentList: null,
+            studentTotal: 0
         }
     },
     computed: {
@@ -157,8 +232,8 @@ export default {
         }
     },
     created(){
-        const id = this.$route.params.id
-        this.fetchData(id)
+        this.examId = this.$route.params.id
+        this.fetchData(this.examId)
     },
     methods: {
         fetchData(examId){
@@ -182,14 +257,55 @@ export default {
             return `${year}-${month}-${day} ${hour}:${minute}`;
         },
         startEdit(){
-            this.temp = this.info
+            this.temp = JSON.parse(JSON.stringify(this.info))
             this.edit = true
         },
         confirmEdit(){
-            this.edit = false
+            this.$refs['dataForm'].validate((valid) => {
+                if(valid){
+                    updateExamDetail(this.temp).then(() => {
+                        this.fetchData(this.examId)
+                        this.edit = false
+                        this.$notify({
+                            title: 'Success',
+                            message: 'Created Successfully',
+                            type: 'success',
+                            duration: 2000
+                        })
+                    })
+                }
+            })
         },
         cancelEdit(){
             this.edit = false
+        },
+        deleteStudent(userId){
+            const deleteIndex = this.temp.users.findIndex(user => user.userId === userId)
+            if (deleteIndex !== -1) {
+                this.temp.users.splice(deleteIndex, 1)
+            }
+        },
+        getStudentList(){
+            this.loading = true
+            fetchStudentList(this.studentListQuery).then(response => {
+                this.studentList = response.data.list.records
+                this.studentTotal = response.data.list.total
+                this.loading = false
+            })
+        },
+        handleStudentFilter(){
+            this.studentListQuery.page = 1
+            this.getStudentList()
+        },
+        startAddingStudent(){
+            this.dialogStudentListVisible = true
+            this.getStudentList()
+        },
+        addStudent(user){
+            if(!this.temp.users.some(u => u.userId === user.userId)){
+                this.temp.users.push(user)
+                this.dialogStudentListVisible = false
+            }
         }
     }
 }
