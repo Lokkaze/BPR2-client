@@ -57,7 +57,7 @@
                 <el-card class="box-card">
                     <div slot="header" class="clearfix">
                         <span>Student list:</span>
-                        <el-button v-if="edit" @click="startAddingStudent()">
+                        <el-button v-if="edit" type="primary" @click="startAddingStudent()">
                             Add
                         </el-button>
                     </div>
@@ -110,20 +110,22 @@
             </el-row>
             <el-row>
                 <div v-if="edit">
-                    <el-button @click="confirmEdit()">
+                    <el-button type="primary" @click="confirmEdit()">
                         Complete
                     </el-button>
-                    <el-button @click="cancelEdit()">
+                    <el-button type="primary" @click="cancelEdit()">
                         Cancel
                     </el-button>
                 </div>
                 <div v-else>
-                    <el-button @click="startEdit()">
+                    <el-button type="primary" style="margin-right:10px;" @click="startEdit()">
                         Edit
                     </el-button>
-                    <el-button>
-                        Edit exam content
-                    </el-button>
+                    <router-link :to="'/exam/examQuestion/' + info.examId">
+                        <el-button type="primary">
+                            Check exam questions
+                        </el-button>
+                    </router-link>
                 </div>
                 
             </el-row>

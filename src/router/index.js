@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import { title } from '@/settings'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -59,17 +60,27 @@ export const constantRoutes = [
     path: '/exam',
     component: Layout,
     redirect: '/exam',
+    meta: {
+      title: 'exam'
+    },
     children: [{
       path: 'exam',
       name: 'exam',
       component: () => import('@/views/exam/index'),
-      meta: { title: 'exam', icon: 'exam' }
+      meta: { title: 'list', icon: 'exam' }
       },
       {
         path: 'examInfo/:id(\\d+)',
         component: () => import('@/views/examInfo/index'),
         name: 'ExamInfo',
-        meta: { title: 'Exam details', noCache: true, activeMenu: '/exam/exam' },
+        meta: { title: 'Details', noCache: true, activeMenu: '/exam/exam' },
+        hidden: true
+      },
+      {
+        path: 'examQuestion/:id(\\d+)',
+        component: () => import('@/views/examQuestion/index'),
+        name: 'ExamQuestion',
+        meta: { title: 'Questions', noCache: true, activeMenu: '/exam/exam' },
         hidden: true
       }
     ]

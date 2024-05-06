@@ -55,3 +55,20 @@ export function fetchStudentList(query){
         params: query
     })
 }
+
+export function fetchQuestions(examId){
+    return request({
+        url: '/exam/detail/questions',
+        method: 'get',
+        params: {examId}
+    })
+}
+
+export function updateQuestions(examId, data){
+    return request({
+        url: '/exam/detail/questions/edit',
+        method: 'post',
+        params: {examId},
+        data
+    })
+}
