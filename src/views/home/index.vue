@@ -1,6 +1,7 @@
 <template>
   <div class="home-container">
     <div class="home-text">name: {{ name }}</div>
+    <div class="home-text">userId: {{ userId }}</div>
     <div class="home-text">isTeacher: {{ isTeacherMethod() }}</div>
   </div>
 </template>
@@ -13,7 +14,8 @@ export default {
   computed: {
     ...mapGetters([
       'name',
-      'isTeacher'
+      'isTeacher',
+      'userId'
     ])
   },
   methods: {

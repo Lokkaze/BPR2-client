@@ -77,8 +77,11 @@
                 </el-card>
             </el-col>
         </el-row>
-        <el-button type="primary" style="margin-right:10px;" @click="startEdit">
+        <el-button v-if="isTeacher" type="primary" style="margin-right:10px;" @click="startEdit">
             Edit
+        </el-button>
+        <el-button type="primary" style="margin-right:10px;" @click="submitAnswers">
+            Submit Answer
         </el-button>
     </el-form>
 
@@ -87,7 +90,8 @@
 
 <script>
 import { title } from '@/settings'
-import { fetchQuestions, updateQuestions } from '../../api/exam'
+import { fetchQuestions, submitAnswersAPI, updateQuestions } from '../../api/exam'
+import { mapGetters } from 'vuex'
 export default {
     data(){
         return{
@@ -101,6 +105,12 @@ export default {
             typeOptions: ['SingleChoice', 'MultipleChoice', 'Quiz']
         }
     },
+    computed: {
+        ...mapGetters([
+            'isTeacher',
+            'userId'
+        ])
+    },
     created(){
         this.examId = this.$route.params.id
         this.fetchData(this.examId)
@@ -111,11 +121,13 @@ export default {
             fetchQuestions(examId).then(response => {
                 this.questions = response.data.questions
                 this.answerList = []
+                let answerIndex = 1
                 for(let question of this.questions){
                     let answer
                     switch(question.type){
                         case 'SingleChoice':
                             answer = {
+                                answerIndex: answerIndex,
                                 type: 'SingleChoice',
                                 answer: 0
                             };
@@ -123,6 +135,7 @@ export default {
                             break
                         case 'MultipleChoice':
                             answer = {
+                                answerIndex: answerIndex,
                                 type: 'MultipleChoice',
                                 answer: [],
                                 selectAll: false
@@ -131,12 +144,14 @@ export default {
                             break
                         case 'Quiz':
                             answer = {
+                                answerIndex: answerIndex,
                                 type: 'Quiz',
                                 answer: ''
                             };
                             this.answerList.push(answer)
                             break
                     }
+                    answerIndex++
                 }
                 this.loading = false
             }).catch(err => {
@@ -211,6 +226,32 @@ export default {
         },
         cancelEdit(){
             this.edit = false
+        },
+        convertToString(data) {
+            if (typeof data === 'string' || typeof data === 'number') {
+                return data.toString();
+            } else if (Array.isArray(data)) {
+                return data.join(','); // 将数组转换为以逗号分隔的字符串
+            } else {
+                return ''; // 如果是其他类型，则返回空字符串或其他默认值
+            }
+        },
+        submitAnswers(){
+            let studentAnswerList = []
+            for(let answer of this.answerList){
+                let studentAnswer = {
+                    userId: this.userId,
+                    examId: this.examId,
+                    questionId: answer.answerIndex,
+                    content: this.convertToString(answer.answer),
+                    type: answer.type
+                }
+                studentAnswerList.push(studentAnswer)
+            }
+            console.log(studentAnswerList)
+            submitAnswersAPI(studentAnswerList).then(response => {
+
+            })
         }
     }
 }

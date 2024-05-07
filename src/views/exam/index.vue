@@ -9,7 +9,7 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button v-if="isTeacher" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
       </el-button>
     </div>
@@ -63,7 +63,7 @@
           </router-link>
           
           <!-- 加提醒 -->
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row.examId)">
+          <el-button v-if="isTeacher" size="mini" type="danger" @click="handleDelete(row.examId)">
             Delete
           </el-button>
         </template>
@@ -120,7 +120,8 @@ export default{
   components: { Pagination },
   computed: {
     ...mapGetters([
-      'name'
+      'name',
+      'isTeacher'
     ])
   },
   data(){

@@ -53,7 +53,7 @@
                     </el-card>
                 </el-col>
             </el-row>
-            <el-row style="margin-bottom:50px;">
+            <el-row v-if="isTeacher" style="margin-bottom:50px;">
                 <el-card class="box-card">
                     <div slot="header" class="clearfix">
                         <span>Student list:</span>
@@ -104,6 +104,11 @@
                                 <span>{{ row.username }}</span>
                             </template>
                         </el-table-column>
+                        <el-table-column label="Status" align="center" width="200">
+                            <template slot-scope="{row}">
+                                <span>{{ getUserExamByUserId(row.userId).userExamStatus }}</span>
+                            </template>
+                        </el-table-column>
                         </el-table>
                     </div>
                 </el-card>
@@ -118,12 +123,15 @@
                     </el-button>
                 </div>
                 <div v-else>
-                    <el-button type="primary" style="margin-right:10px;" @click="startEdit()">
+                    <el-button v-if="isTeacher" type="primary" style="margin-right:10px;" @click="startEdit()">
                         Edit
                     </el-button>
                     <router-link :to="'/exam/examQuestion/' + info.examId">
-                        <el-button type="primary">
+                        <el-button v-if="isTeacher" type="primary">
                             Check exam questions
+                        </el-button>
+                        <el-button v-if="!isTeacher && info.exam.status==='Opening'" type="primary">
+                            Start exam
                         </el-button>
                     </router-link>
                 </div>
@@ -168,6 +176,7 @@
 <script>
 import { fetchExamDetail, fetchStudentList, updateExamDetail } from '@/api/exam';
 import { valid } from 'mockjs';
+import { mapGetters } from 'vuex';
 
 const defaultFoam = {
     examId: 0,
@@ -204,10 +213,14 @@ export default {
                 limit: 10
             },
             studentList: null,
-            studentTotal: 0
+            studentTotal: 0,
+            userExamList: null
         }
     },
     computed: {
+        ...mapGetters([
+            'isTeacher'
+        ]),
         tempStartTime: {
         // set and get is useful when the data
         // returned by the back end api is different from the front end
@@ -242,6 +255,7 @@ export default {
             this.loading = true
             fetchExamDetail(examId).then(response => {
                 this.info = response.data.info
+                this.userExamList = response.data.userExam
                 this.loading = false
             }).catch(err => {
                 console.log(err)
@@ -308,6 +322,10 @@ export default {
                 this.temp.users.push(user)
                 this.dialogStudentListVisible = false
             }
+        },
+        getUserExamByUserId(userId){
+            let userExam = this.userExamList.filter(item => item.userId === userId)[0]
+            return userExam
         }
     }
 }

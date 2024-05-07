@@ -72,3 +72,11 @@ export function updateQuestions(examId, data){
         data
     })
 }
+
+export function submitAnswersAPI(data){
+    return request({
+        url: '/exam/detail/questions/submit',
+        method: 'post',
+        data
+    })
+}
