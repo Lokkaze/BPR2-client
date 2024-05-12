@@ -80,7 +80,7 @@
         <el-button v-if="isTeacher" type="primary" style="margin-right:10px;" @click="startEdit">
             Edit
         </el-button>
-        <el-button type="primary" style="margin-right:10px;" @click="submitAnswers">
+        <el-button v-if="!isTeacher" type="primary" style="margin-right:10px;" @click="submitAnswers">
             Submit Answer
         </el-button>
     </el-form>
@@ -92,6 +92,7 @@
 import { title } from '@/settings'
 import { fetchQuestions, submitAnswersAPI, updateQuestions } from '../../api/exam'
 import { mapGetters } from 'vuex'
+import { fetchRecords, updateExamRecord } from '@/api/stream';
 export default {
     data(){
         return{
@@ -181,9 +182,11 @@ export default {
         },
         addQuestion(){
             let newQuestionId = 1
-            if(this.temp[this.temp.length-1].questionId){
+
+            if(this.temp.length > 0 && this.temp[this.temp.length-1].questionId){
                 newQuestionId = this.temp[this.temp.length-1].questionId+1
             }
+
             let newQuestion = {
                 examId: this.examId,
                 questionId: newQuestionId,
@@ -249,8 +252,21 @@ export default {
                 studentAnswerList.push(studentAnswer)
             }
             console.log(studentAnswerList)
-            submitAnswersAPI(studentAnswerList).then(response => {
-
+            submitAnswersAPI(studentAnswerList).then(submitAnswersAPIResponse => {
+                fetchRecords().then(fetchRecordsResponse => {
+                    console.log(fetchRecordsResponse)
+                    console.log('userId:'+this.userId)
+                    const processedRecord = fetchRecordsResponse.data.filter(item => item.stream == this.userId && item.progress === true)
+                    console.log(processedRecord)
+                    const examRecord = {
+                        examId: this.examId,
+                        userId: this.userId,
+                        uuid: processedRecord[0].uuid
+                    }
+                    updateExamRecord(examRecord).then(updateExamRecordResponse => {
+                        this.$router.push(`/exam/examInfo/${this.examId}`)
+                    })
+                } )
             })
         }
     }

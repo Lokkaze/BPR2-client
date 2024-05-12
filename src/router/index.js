@@ -49,7 +49,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/home',
     children: [{
-      path: 'home',
+      path: '/home',
       name: 'Home',
       component: () => import('@/views/home/index'),
       meta: { title: 'Home', icon: 'home' }
@@ -64,7 +64,7 @@ export const constantRoutes = [
       title: 'exam'
     },
     children: [{
-      path: 'exam',
+      path: '',
       name: 'exam',
       component: () => import('@/views/exam/index'),
       meta: { title: 'list', icon: 'exam' }
@@ -82,9 +82,54 @@ export const constantRoutes = [
         name: 'ExamQuestion',
         meta: { title: 'Questions', noCache: true, activeMenu: '/exam/exam' },
         hidden: true
-      }
+      },
+      {
+        path: 'invigilate/:id(\\d+)',
+        component: () => import('@/views/invigilate/index'),
+        name: 'invigilate',
+        meta: { title: 'invigilate', noCache: true, activeMenu: '/exam/exam' },
+        hidden: true
+        }
     ]
   },
+
+  {
+    path: '',
+    component: Layout,
+    children: [{
+      path: '/videoPlayer/:uuid',
+      name: 'videoPlayer',
+      component: () => import('@/views/videoPlayer/index'),
+      meta: { title: 'videoPlayer', icon: 'home' },
+      hidden: true
+    }]
+  },
+
+  {
+    path: '/videoPlayer/',
+    component: Layout,
+    children: [{
+      path: '/videoPlayer/',
+      name: 'videoPlayer',
+      component: () => import('@/views/videoPlayer/index'),
+      meta: { title: 'videoPlayer', icon: 'home' },
+      hidden: true
+    }]
+  },
+
+  {
+    path: '/invigilate/:id(\\d+)',
+    component: Layout,
+    children: [{
+      path: '/invigilate/',
+      name: 'invigilate',
+      component: () => import('@/views/invigilate/index'),
+      meta: { title: 'invigilate', icon: 'home' },
+      hidden: true
+    }]
+  },
+
+
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

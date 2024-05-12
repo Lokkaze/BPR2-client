@@ -1,6 +1,7 @@
 <template>
     <div v-loading="loading">
         <el-form ref="dataForm" :model="temp" label-position="left" label-width="70px">
+            
             <el-row style="margin-bottom:50px;margin-top:10px;">
                 <el-col :span="8" class="text-center">
                     <el-card class="box-card">
@@ -109,6 +110,13 @@
                                 <span>{{ getUserExamByUserId(row.userId).userExamStatus }}</span>
                             </template>
                         </el-table-column>
+                        <el-table-column v-if="info.exam.status === 'Completed'" label="Delete" align="center" width="230" class-name="small-padding fixed-width">
+                            <template slot-scope="{row}">
+                                <el-button @click="fetchExamRecord(examId, row.userId)" type="primary">
+                                    CheckRecord
+                                </el-button>
+                            </template>
+                        </el-table-column>
                         </el-table>
                     </div>
                 </el-card>
@@ -127,13 +135,18 @@
                         Edit
                     </el-button>
                     <router-link :to="'/exam/examQuestion/' + info.examId">
-                        <el-button v-if="isTeacher" type="primary">
+                        <el-button style="margin-right:10px;" v-if="isTeacher" type="primary">
                             Check exam questions
                         </el-button>
-                        <el-button v-if="!isTeacher && info.exam.status==='Opening'" type="primary">
-                            Start exam
+                    </router-link>
+                    <router-link :to="'/exam/invigilate/' + info.examId">
+                        <el-button v-if="isTeacher && info.exam.status==='Opening'" type="primary">
+                            Invigilate
                         </el-button>
                     </router-link>
+                    <el-button v-if="!isTeacher && info.exam.status==='Opening'" type="primary" @click="startExam()">
+                        Start exam
+                    </el-button>
                 </div>
                 
             </el-row>
@@ -170,11 +183,23 @@
                 </el-table-column>
             </el-table>
         </el-dialog>
+
+        <el-dialog title="Important: Share your camera before start exam" :visible.sync="dialogCheckCameraVisible">
+            <el-button type="primary" style="margin-right:20px;" >
+                Start sharing camera
+            </el-button>
+            <router-link :to="'/exam/examQuestion/' + info.examId">
+                        <el-button type="primary">
+                            Start exam
+                        </el-button>
+                    </router-link>
+        </el-dialog>
         
     </div>
 </template>
 <script>
 import { fetchExamDetail, fetchStudentList, updateExamDetail } from '@/api/exam';
+import { fetchExamRecord } from '@/api/stream';
 import { valid } from 'mockjs';
 import { mapGetters } from 'vuex';
 
@@ -214,12 +239,14 @@ export default {
             },
             studentList: null,
             studentTotal: 0,
-            userExamList: null
+            userExamList: null,
+            dialogCheckCameraVisible: false
         }
     },
     computed: {
         ...mapGetters([
-            'isTeacher'
+            'isTeacher',
+            'userId'
         ]),
         tempStartTime: {
         // set and get is useful when the data
@@ -326,6 +353,14 @@ export default {
         getUserExamByUserId(userId){
             let userExam = this.userExamList.filter(item => item.userId === userId)[0]
             return userExam
+        },
+        startExam(){
+            this.dialogCheckCameraVisible = true
+        },
+        fetchExamRecord(userId, examId){
+            fetchExamRecord(userId, examId).then(response => {
+                this.$router.push(`/videoPlayer/${response.data.record.uuid}`)
+            })
         }
     }
 }

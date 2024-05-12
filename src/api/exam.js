@@ -80,3 +80,11 @@ export function submitAnswersAPI(data){
         data
     })
 }
+
+export function fetchStreamList(examId){
+    return request({
+        url: '/exam/detail/streamList',
+        method: 'get',
+        params: {examId}
+    })
+}
