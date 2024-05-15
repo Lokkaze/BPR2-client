@@ -144,7 +144,7 @@
                             Invigilate
                         </el-button>
                     </router-link>
-                    <el-button v-if="!isTeacher && info.exam.status==='Opening'" type="primary" @click="startExam()">
+                    <el-button v-if="!isTeacher && info.exam.status==='Opening'" type="primary" @click="startExamDialog()">
                         Start exam
                     </el-button>
                 </div>
@@ -188,11 +188,9 @@
             <el-button type="primary" style="margin-right:20px;" @click="shareCamera">
                 Start sharing camera
             </el-button>
-            <router-link :to="'/exam/examQuestion/' + info.examId">
-                        <el-button type="primary">
-                            Start exam
-                        </el-button>
-                    </router-link>
+            <el-button type="primary" @click="startExam()">
+                Start exam
+            </el-button>
         </el-dialog>
         
     </div>
@@ -200,6 +198,8 @@
 <script>
 import { fetchExamDetail, fetchStudentList, updateExamDetail } from '@/api/exam';
 import { fetchExamRecord } from '@/api/stream';
+import { getInfo } from '@/api/user';
+import { getToken } from '@/utils/auth';
 import { valid } from 'mockjs';
 import { mapGetters } from 'vuex';
 
@@ -354,7 +354,7 @@ export default {
             let userExam = this.userExamList.filter(item => item.userId === userId)[0]
             return userExam
         },
-        startExam(){
+        startExamDialog(){
             this.dialogCheckCameraVisible = true
         },
         fetchExamRecord(userId, examId){
@@ -366,6 +366,16 @@ export default {
             const windowFeatures = 'width=500,height=500,top=100,left=100,location=no,menubar=no,toolbar=no,resizable=no,scrollbars=no'
             const shareCameraUrl = `${process.env.VUE_APP_LIVE_STREAM_URL}${this.userId}&examId=${this.examId}&statusMode=shareCamera`
             const newWindow = window.open(shareCameraUrl, '_blank', windowFeatures);
+        },
+        startExam(){
+            getInfo(getToken()).then(response => {
+                if(response.data.avatar === "" || response.data.avatar === null) {
+                    alert("You need to set your avatar first!")
+                }
+                else {
+                    this.$router.push(`/exam/examQuestion/${this.info.examId}`)
+                }
+            })
         }
     }
 }
