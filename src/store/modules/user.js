@@ -64,7 +64,7 @@ const actions = {
         const { name, avatar, isTeacher, userId } = data
 
         commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
+        commit('SET_AVATAR', `${process.env.VUE_APP_BASE_API}${avatar}`)
         commit('SET_ISTEACHER', isTeacher)
         commit('SET_USERID', userId)
         resolve(data)

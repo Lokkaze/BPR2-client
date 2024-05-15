@@ -364,7 +364,7 @@ export default {
         },
         shareCamera(){
             const windowFeatures = 'width=500,height=500,top=100,left=100,location=no,menubar=no,toolbar=no,resizable=no,scrollbars=no'
-            const shareCameraUrl = `${process.env.VUE_APP_LIVE_STREAM_URL}${this.userId}&examId=${this.examId}`
+            const shareCameraUrl = `${process.env.VUE_APP_LIVE_STREAM_URL}${this.userId}&examId=${this.examId}&statusMode=shareCamera`
             const newWindow = window.open(shareCameraUrl, '_blank', windowFeatures);
         }
     }

@@ -102,6 +102,13 @@ export const constantRoutes = [
       component: () => import('@/views/videoPlayer/index'),
       meta: { title: 'videoPlayer', icon: 'home' },
       hidden: true
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('@/views/profile/index'),
+      meta: { title: 'profile', icon: 'home' },
+      hidden: true
     }]
   },
 
