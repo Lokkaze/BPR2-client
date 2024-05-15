@@ -90,7 +90,7 @@
 
 <script>
 import { title } from '@/settings'
-import { fetchQuestions, submitAnswersAPI, updateQuestions } from '../../api/exam'
+import { checkStatus, fetchQuestions, submitAnswersAPI, updateQuestions } from '../../api/exam'
 import { mapGetters } from 'vuex'
 import { fetchRecords, updateExamRecord } from '@/api/stream';
 export default {
@@ -115,6 +115,9 @@ export default {
     created(){
         this.examId = this.$route.params.id
         this.fetchData(this.examId)
+        if(!this.isTeacher) {
+            this.checkCheat()
+        }
     },
     methods: {
         fetchData(examId){
@@ -267,6 +270,15 @@ export default {
                         this.$router.push(`/exam/examInfo/${this.examId}`)
                     })
                 } )
+            })
+        },
+        checkCheat(){
+            checkStatus(this.userId, this.examId).then(response => {
+                if(response.data.status === 'cheating detected') {
+                    alert("Your cheating already recorded, exam interrupted!")
+                    this.$router.push(`/exam/examInfo/${this.examId}`)
+                }
+                setTimeout(this.checkCheat, 5000)
             })
         }
     }

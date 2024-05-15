@@ -23,3 +23,27 @@ export function updateExamRecord(data){
         data
     })
 }
+
+export function fetchCheatList(examId){
+    return request({
+        url: '/record/cheat/list',
+        method: 'get',
+        params: {examId}
+    })
+}
+
+export function DeleteCheat(userId, examId, timestamp){
+    return request({
+        url: '/record/cheat/delete',
+        method: 'delete',
+        params: {userId, examId, timestamp}
+    })
+}
+
+export function confirmCheat(userId, examId){
+    return request({
+        url: '/record/cheat/confirm',
+        method: 'get',
+        params: {userId, examId}
+    })
+}

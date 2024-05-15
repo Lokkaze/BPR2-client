@@ -185,7 +185,7 @@
         </el-dialog>
 
         <el-dialog title="Important: Share your camera before start exam" :visible.sync="dialogCheckCameraVisible">
-            <el-button type="primary" style="margin-right:20px;" >
+            <el-button type="primary" style="margin-right:20px;" @click="shareCamera">
                 Start sharing camera
             </el-button>
             <router-link :to="'/exam/examQuestion/' + info.examId">
@@ -361,6 +361,11 @@ export default {
             fetchExamRecord(userId, examId).then(response => {
                 this.$router.push(`/videoPlayer/${response.data.record.uuid}`)
             })
+        },
+        shareCamera(){
+            const windowFeatures = 'width=500,height=500,top=100,left=100,location=no,menubar=no,toolbar=no,resizable=no,scrollbars=no'
+            const shareCameraUrl = `${process.env.VUE_APP_LIVE_STREAM_URL}${this.userId}&examId=${this.examId}`
+            const newWindow = window.open(shareCameraUrl, '_blank', windowFeatures);
         }
     }
 }

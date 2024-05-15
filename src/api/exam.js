@@ -88,3 +88,11 @@ export function fetchStreamList(examId){
         params: {examId}
     })
 }
+
+export function checkStatus(userId, examId){
+    return request({
+        url: '/exam/detail/questions/status',
+        method: 'get',
+        params: {userId, examId}
+    })
+}

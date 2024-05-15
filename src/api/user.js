@@ -22,3 +22,11 @@ export function logout() {
     method: 'get'
   })
 }
+
+export function fetchUsername(userId) {
+  return request({
+    url: '/user/username',
+    method: 'get',
+    params: { userId }
+  })
+}
