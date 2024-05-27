@@ -110,7 +110,7 @@
                                 <span>{{ getUserExamByUserId(row.userId).userExamStatus }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column v-if="info.exam.status === 'Completed'" label="Delete" align="center" width="230" class-name="small-padding fixed-width">
+                        <el-table-column v-if="info.exam.status === 'Completed'" label="CheckRecord" align="center" width="230" class-name="small-padding fixed-width">
                             <template slot-scope="{row}">
                                 <el-button @click="fetchExamRecord(examId, row.userId)" type="primary">
                                     CheckRecord
