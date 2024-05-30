@@ -52,7 +52,7 @@
                     <span>{{ row.userExamStatus }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="camera" align="center" width="330">
+            <el-table-column label="camera" align="center" >
                 <template slot-scope="{row}">
                     <videoPlayer :userId="`${row.userId}`"></videoPlayer>
                 </template>

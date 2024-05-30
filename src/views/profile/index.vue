@@ -132,6 +132,7 @@ export default {
                     changePassword(this.temp).then(response => {
                         console.log(response)
                         this.dialogChangePasswordVisible = false
+                        this.logout()
                     })
                 }
             })
@@ -157,6 +158,10 @@ export default {
         },
         avatarUpload() {
             console.log("upload success")
+        },
+        async logout() {
+            await this.$store.dispatch('user/logout')
+            this.$router.push(`/login?redirect=${this.$route.fullPath}`)
         }
     }
 }
